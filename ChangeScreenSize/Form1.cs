@@ -16,6 +16,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Media;
+using Application = System.Windows.Forms.Application;
 using Timer = System.Timers.Timer;
 
 namespace ChangeScreenSize
@@ -113,30 +114,32 @@ namespace ChangeScreenSize
             try
             {
                 var primaryMonitorScale = (100 * Screen.PrimaryScreen.Bounds.Width / SystemParameters.PrimaryScreenWidth);
-                var values1 = Registry.CurrentUser.GetSubKeyNames();
-                
-                var key = Registry.CurrentUser.OpenSubKey("Control Panel", true);
-                var values2 = key.GetSubKeyNames();
-                
-                key = key.OpenSubKey("Desktop", true);
-                var values3 = key.GetSubKeyNames();
-                
-                key = key.OpenSubKey("PerMonitorSettings", true);
+
+                var key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop\PerMonitorSettings", true);
                 
                 var monitors = key.GetSubKeyNames();
                 
                 RegistryKey auxKey = null;
+
+
+
 
                 auxKey = key.OpenSubKey(monitors[0], true);
                 if (Screen.AllScreens.Count() > 1)
                 {
                     auxKey.SetValue("DpiValue", 0);
                 }
-                else auxKey.SetValue("DpiValue", -1);
-
+                else
+                {
+                    auxKey.SetValue("DpiValue", -1);
+                }
+                
 
                 SetResolution(1920, 1080);
                 SetResolution(2560, 1440);
+
+                //SetResolution(1280, 720);
+                //SetResolution(1920, 1080);
 
             }
             catch (Exception ex)
@@ -152,9 +155,9 @@ namespace ChangeScreenSize
             timer.Close();
         }
 
-        private void exitApp(object sender, EventArgs e)
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.Application.Exit();
+            Application.Exit();
         }
     }
 }
